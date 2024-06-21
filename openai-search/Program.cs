@@ -1,38 +1,37 @@
-﻿using Azure;
-using Azure.AI.OpenAI;
+﻿using Azure.AI.OpenAI;
+using Azure.AI.OpenAI.Chat;
+using OpenAI.Chat;
 
-string endpoint = "https://demoaiserviceswolf.openai.azure.com/";
-string key = "9d72a9f5a65b47a9946500d4dcfee302";
+string aiEndpoint = "https://demoaiservices222.openai.azure.com";
+string aiKey = "691ee6d6242f48d2b05301fb54e2d9b0";
 
-OpenAIClient client = new(new Uri(endpoint), new AzureKeyCredential(key));
+var azureClient = new AzureOpenAIClient(new Uri(aiEndpoint), aiKey);
+var chatClient = azureClient.GetChatClient("gpt-4");
 
 Console.WriteLine("Your prompt:");
-var userPrompt = Console.ReadLine();
-var chatCompletionsOptions = new ChatCompletionsOptions()
-{
-    DeploymentName = "gpt-4",
-    Messages =
-    {
-        new ChatRequestUserMessage(userPrompt),
-    },
-    AzureExtensionsOptions = new AzureChatExtensionsOptions
-    {
-        Extensions =
-        {
-            new AzureSearchChatExtensionConfiguration
-            {
-                SearchEndpoint = new Uri("https://demosearchwolf.search.windows.net"),
-                IndexName = "azureblob-index",
-                Authentication = new OnYourDataApiKeyAuthenticationOptions("iAnX0v0l4HLfxaF25zjupNEVQTXD8VvuW3vUnHOv3gAzSeDj3xuv")
-            }
-        }
-    }
-};
+var prompt = Console.ReadLine();
 
+// Required for preview features
+#pragma warning disable AOAI001
+var chatOptions = new ChatCompletionOptions();
+chatOptions.AddDataSource(new AzureSearchChatDataSource()
+{
+    Endpoint = new Uri("https://aiservicesintrosearch.search.windows.net"),
+    IndexName = "azureblob-index",
+    Authentication = DataSourceAuthentication.FromApiKey("SHBI7T6jM1rR7o5baz19Evq56iHIXv8FHVQyEnZesfAzSeDwX5gH"),
+});
+
+var completion = chatClient.CompleteChatStreamingAsync(
+    [
+        new SystemChatMessage("You are a helpful AI assistant."),
+        new UserChatMessage(prompt),
+    ], chatOptions);
 
 Console.WriteLine("AI Response:");
-await foreach(var item in client.GetChatCompletionsStreaming(chatCompletionsOptions))
+await foreach (var item in completion)
 {
-    Console.Write(item.ContentUpdate);
+    foreach (var contentPart in item.ContentUpdate)
+    {
+        Console.Write(contentPart.Text);
+    }
 }
-

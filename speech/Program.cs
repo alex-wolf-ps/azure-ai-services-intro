@@ -1,13 +1,12 @@
 ﻿using Microsoft.CognitiveServices.Speech;
 
-var config = SpeechConfig.FromSubscription("your-key", "your-region");
+var config = SpeechConfig.FromSubscription("691ee6d6242f48d2b05301fb54e2d9b0", "eastus");
 
-// Creates a speech synthesizer using the default speaker as audio output.
+Console.WriteLine("Your text to speech input:");
+string text = Console.ReadLine();
+
 using (var synthesizer = new SpeechSynthesizer(config))
 {
-    // Receive a text from console input and synthesize it to speaker.
-    Console.WriteLine("Type some text that you want to speak...");
-    string text = Console.ReadLine();
     using (var result = await synthesizer.SpeakTextAsync(text))
     {
         if (result.Reason == ResultReason.SynthesizingAudioCompleted)
@@ -18,11 +17,6 @@ using (var synthesizer = new SpeechSynthesizer(config))
         {
             var cancellation = SpeechSynthesisCancellationDetails.FromResult(result);
             Console.WriteLine($"CANCELED: Reason={cancellation.Reason}");
-
-            if (cancellation.Reason == CancellationReason.Error)
-            {
-                Console.WriteLine($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
-            }
         }
     }
 }

@@ -1,24 +1,35 @@
-﻿using Azure;
-using Azure.AI.OpenAI;
+﻿using Azure.AI.OpenAI;
+using Azure.AI.OpenAI.Chat;
+using OpenAI.Chat;
 
-string endpoint = "https://demoaiserviceswolf.openai.azure.com/";
-string key = "9d72a9f5a65b47a9946500d4dcfee302";
-
-OpenAIClient client = new(new Uri(endpoint), new AzureKeyCredential(key));
+string aiEndpoint = "https://demoaiservices222.openai.azure.com";
+string aiKey = "691ee6d6242f48d2b05301fb54e2d9b0";
+ 
+var azureAIClient = new AzureOpenAIClient(new Uri(aiEndpoint), aiKey);
+var chatClient = azureAIClient.GetChatClient("gpt-4");
 
 Console.WriteLine("Your prompt:");
-var userPrompt = Console.ReadLine();
-var chatCompletionsOptions = new ChatCompletionsOptions()
+var prompt = Console.ReadLine();
+
+// Required for preview features
+#pragma warning disable AOAI001
+var chatOptions = new ChatCompletionOptions();
+chatOptions.AddDataSource(new AzureSearchChatDataSource()
 {
-    DeploymentName = "gpt-4",
-    Messages =
-    {
-        new ChatRequestUserMessage(userPrompt),
-    }
-};
+    Endpoint = new Uri("https://aiservicesintrosearch.search.windows.net"),
+    IndexName = "azureblob-index",
+    Authentication = DataSourceAuthentication.FromApiKey("SHBI7T6jM1rR7o5baz19Evq56iHIXv8FHVQyEnZesfAzSeDwX5gH"),
+});
+
+var completionUpdates = chatClient.CompleteChatStreamingAsync([
+    new SystemChatMessage("You are a helpful AI assistant."),
+    new UserChatMessage(prompt)], chatOptions);
 
 Console.WriteLine("AI Response:");
-await foreach(var item in client.GetChatCompletionsStreaming(chatCompletionsOptions))
+await foreach (var update in completionUpdates)
 {
-    Console.Write(item.ContentUpdate);
+    foreach (var contentPart in update.ContentUpdate)
+    {
+        Console.Write(contentPart.Text);
+    }
 }
