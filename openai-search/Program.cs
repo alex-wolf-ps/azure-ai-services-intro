@@ -2,8 +2,8 @@
 using Azure.AI.OpenAI.Chat;
 using OpenAI.Chat;
 
-string aiEndpoint = "https://demoaiservices222.openai.azure.com";
-string aiKey = "691ee6d6242f48d2b05301fb54e2d9b0";
+string aiEndpoint = "your-ai-services-endpoint";
+string aiKey = "your-ai-services-key";
 
 var azureClient = new AzureOpenAIClient(new Uri(aiEndpoint), aiKey);
 var chatClient = azureClient.GetChatClient("gpt-4");
@@ -16,9 +16,9 @@ var prompt = Console.ReadLine();
 var chatOptions = new ChatCompletionOptions();
 chatOptions.AddDataSource(new AzureSearchChatDataSource()
 {
-    Endpoint = new Uri("https://aiservicesintrosearch.search.windows.net"),
-    IndexName = "azureblob-index",
-    Authentication = DataSourceAuthentication.FromApiKey("SHBI7T6jM1rR7o5baz19Evq56iHIXv8FHVQyEnZesfAzSeDwX5gH"),
+    Endpoint = new Uri("your-search-endpoint"),
+    IndexName = "your-search-index-name",
+    Authentication = DataSourceAuthentication.FromApiKey("your-search-key"),
 });
 
 var completion = chatClient.CompleteChatStreamingAsync(

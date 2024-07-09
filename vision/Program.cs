@@ -4,8 +4,8 @@ using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 var imageUrl = "https://aiservicesintro.blob.core.windows.net/receipts/receipt.jpg";
 
 var client = new ComputerVisionClient(
-    new ApiKeyServiceClientCredentials("691ee6d6242f48d2b05301fb54e2d9b0"))
-    { Endpoint = "https://demoaiservices222.openai.azure.com" };
+    new ApiKeyServiceClientCredentials("your-ai-services-key"))
+    { Endpoint = "your-ai-services-endpoint" };
 
 var headers = await client.ReadAsync(imageUrl);
 

@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.AI.Translation.Text;
 
-string key = "691ee6d6242f48d2b05301fb54e2d9b0";
+string key = "your-ai-services-key";
 string region = "eastus";
 
 var client = new TextTranslationClient(new AzureKeyCredential(key), region);

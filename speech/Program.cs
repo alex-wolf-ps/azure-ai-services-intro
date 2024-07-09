@@ -1,6 +1,6 @@
 ﻿using Microsoft.CognitiveServices.Speech;
 
-var config = SpeechConfig.FromSubscription("691ee6d6242f48d2b05301fb54e2d9b0", "eastus");
+var config = SpeechConfig.FromSubscription("your-ai-services-key", "eastus");
 
 Console.WriteLine("Your text to speech input:");
 string text = Console.ReadLine();
